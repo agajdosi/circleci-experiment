@@ -2,10 +2,10 @@ version: 2
 jobs:
   green-job:
     docker:
-      - image: fedora:latest
+      - image: circleci/golang:latest
     steps:
       - checkout
-      - run: whoami
+      - run: go get -u github.com/raviqqe/muffet && muffet http://www.nomin.cloud/
   blue-job:
     docker:
       - image: alpine:latest
@@ -18,3 +18,13 @@ workflows:
     jobs:
       - green-job
       - blue-job
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 0 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - green-job
